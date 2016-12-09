@@ -1,4 +1,4 @@
-# leyla
+# reversi-cpp
 
 A simple reversi implementation.
 
