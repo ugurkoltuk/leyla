@@ -1,0 +1,10 @@
+ai/leyla.cpp
+ai/leyla.h
+game/board.cpp
+game/board.h
+game/gameplay.cpp
+game/gameplay.h
+ui/tui/main.cpp
+CMakeLists.txt
+LICENSE
+README.md

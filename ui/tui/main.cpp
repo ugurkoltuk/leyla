@@ -1,6 +1,7 @@
 #include <iostream>
 #include <cctype>
 #include <termcap.h>
+#include <unistd.h>
 
 #include "game/gameplay.h"
 #include "ai/leyla.h"
@@ -33,6 +34,11 @@ int main()
 
         do {
             clear_screen();
+            if (!game.hasValidMoves(Gameplay::Player_Black))
+            {
+                break;
+            }
+
             if (humanPlayed)
             {
                 cout << "Invalid move (" << row << ", " << col_char << ")! Try again." << endl;
@@ -45,15 +51,27 @@ int main()
             }
 
             cout << game;
+
             cout << "Enter your move:" << endl;
             cin >> row >> col_char;
             col = toupper(col_char) - 'A';
         }
         while (!game.play(Board::Coordinates(row, col)));
 
-         game.play(leylaCoordinates = leyla.play(game));
-         leylaPlayed = true;
-         humanPlayed = false;
+        clear_screen();
+        cout << game;
+        cout << "Leyla is thinking ... " << endl;
+
+        if (!game.hasValidMoves(Gameplay::Player_White))
+        {
+            continue;
+        }
+        game.play(leylaCoordinates = leyla.play(game));
+        sleep(1);
+        clear_screen();
+        cout << game;
+        leylaPlayed = true;
+        humanPlayed = false;
     }
 
     cout << game;

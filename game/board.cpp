@@ -123,22 +123,22 @@ ostream& operator<<(ostream& os, const Board &gameBoard)
             switch (gameBoard.at(Board::Coordinates(row,col)))
             {
             case Board::Disc::Disc_None:
-                os << " . ";
+                os << "   ";
                 break;
             case Board::Disc::Disc_Black:
-                os << " B ";
+                os << " ● ";
                 break;
             case Board::Disc::Disc_White:
-                os << " W ";
+                os << " ○ ";
                 break;
             default:
-                os << "???";
+                os << "????";
                 break;
             }
             os << "|";
         }
 
-        os << endl;
+        os << endl << endl;
     }
     return os;
 }
