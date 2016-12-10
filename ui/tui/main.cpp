@@ -21,11 +21,13 @@ void clear_screen()
 int main()
 {
     Gameplay game;
-    Leyla leyla(5);
+    Leyla leyla(4, Gameplay::Player_White);
     bool humanPlayed = false;
     bool leylaPlayed = false;
 
-   Board::Coordinates leylaCoordinates;
+    clear_screen();
+    Board::Coordinates leylaCoordinates;
+    cout << game;
 
     while (!game.hasEnded())
     {
@@ -34,7 +36,7 @@ int main()
 
         do {
             clear_screen();
-            if (!game.hasValidMoves(Gameplay::Player_Black))
+            if (!game.hasValidMoves())
             {
                 break;
             }
@@ -49,9 +51,7 @@ int main()
             {
                 cout << "Leyla played: (" << leylaCoordinates.first << ", " << char(leylaCoordinates.second + 'A') << ")." << endl;
             }
-
             cout << game;
-
             cout << "Enter your move:" << endl;
             cin >> row >> col_char;
             col = toupper(col_char) - 'A';
@@ -60,20 +60,21 @@ int main()
 
         clear_screen();
         cout << game;
-        cout << "Leyla is thinking ... " << endl;
 
-        if (!game.hasValidMoves(Gameplay::Player_White))
+        if (!game.hasValidMoves())
         {
+            cout << "Leyla has no valid moves." << endl;
             continue;
         }
+        cout << "Leyla is thinking ... " << endl;
         game.play(leylaCoordinates = leyla.play(game));
-        sleep(1);
         clear_screen();
         cout << game;
         leylaPlayed = true;
         humanPlayed = false;
     }
 
+    clear_screen();
     cout << game;
 
     if (game.winner() == Gameplay::Player_Black)

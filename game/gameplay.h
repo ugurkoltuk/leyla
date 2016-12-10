@@ -1,6 +1,8 @@
 #ifndef GAMEPLAY_H
 #define GAMEPLAY_H
 
+#include <vector>
+
 #include "board.h"
 
 class Gameplay
@@ -39,6 +41,14 @@ public:
     bool play(const Board::Coordinates &cooridnates);
 
     /**
+     * @brief advance
+     *          Skip the current player's turn.
+     * @return
+     *          true on success, otherwise on failure.
+     */
+     bool skip(void);
+
+    /**
      * @brief currentPlayer
      *          This function returns whoever is the current player.
      * @return disc color of the current player. (Black or White)
@@ -64,12 +74,30 @@ public:
     size_t size(void) const;
 
     /**
+     * @brief isValidMove
+     *          Checks if given move is a valid move.
+     * @param move
+     *          move to check
+     * @return
+     *        true if a valid move, false otherwise.
+     */
+    bool isValidMove(Board::Coordinates move) const;
+
+    /**
+     * @brief allValidMoves
+     *          Finds all valid moves for a given state of a gameplay.
+     * @return
+     *          A vector of all valid moves, if any.
+     */
+    std::vector<Board::Coordinates> allValidMoves() const;
+
+    /**
      * @brief hasValidMoves
      *          Function to check if a given player has
      *          any valid moves.
      * @return
      */
-    bool hasValidMoves(Player player) const;
+    bool hasValidMoves() const;
 
     /**
      * @brief hasEnded
@@ -87,7 +115,6 @@ public:
      *          if the game hasn't ended yet, or if it is a draw.
      */
     Player winner(void) const;
-
 
 
     /**
@@ -118,8 +145,8 @@ private:
         Direction_Max,
     };
 
-    static void getIncrement(Direction dir, int &row_increment, int &col_increment);
     void advance(void);
+    static void getIncrement(Direction dir, int &row_increment, int &col_increment);
 };
 
 #endif // GAMEPLAY_H

@@ -49,6 +49,16 @@ void Gameplay::getIncrement(Direction dir, int &row_increment, int &col_incremen
     }
 }
 
+bool Gameplay::skip(void)
+{
+    if (hasValidMoves())
+    {
+        return false;
+    }
+    m_currentPlayer = m_currentPlayer == Player_White ? Player_Black : Player_White;
+}
+
+
 void Gameplay::advance(void)
 {
     m_currentPlayer = m_currentPlayer == Player_White ? Player_Black : Player_White;
@@ -152,29 +162,38 @@ size_t Gameplay::size(void) const
     return m_board.size();
 }
 
-bool Gameplay::hasValidMoves(Player player) const
+bool Gameplay::isValidMove(Board::Coordinates move) const
 {
+    Gameplay copy(*this);
+    return copy.play(move);
+}
+
+vector<Board::Coordinates> Gameplay::allValidMoves() const
+{
+    vector<Board::Coordinates> validMoves;
     for (size_t row = 0; row < size(); ++row)
     {
         for (size_t col = 0; col < size(); ++col)
         {
-            Gameplay copy(*this);
-            if (player != currentPlayer())
+            if (isValidMove(Board::Coordinates(row, col)))
             {
-                copy.advance();
-            }
-            if (copy.play(Board::Coordinates(row,col)) == true)
-            {
-                return true;
+                validMoves.push_back(Board::Coordinates(row, col));
             }
         }
     }
-    return false;
+    return validMoves;
+
+}
+
+bool Gameplay::hasValidMoves() const
+{
+    return !allValidMoves().empty();
 }
 
 bool Gameplay::hasEnded(void) const
 {
-    return !hasValidMoves(Player_Black) && !hasValidMoves(Player_White);
+    Gameplay copy(*this);
+    return !copy.hasValidMoves() && (copy.advance(), !copy.hasValidMoves());
 }
 
 Gameplay::Player Gameplay::winner(void) const
@@ -195,8 +214,8 @@ Gameplay::Player Gameplay::winner(void) const
 std::ostream& operator<<(std::ostream& os, const Gameplay &g)
 {
     os << g.m_board;
-    os << "White: " << g.currentDiscCount(Gameplay::Player_White) << " Black: " << g.currentDiscCount(Gameplay::Player_Black);
-    os << ", Current player: " << (g.currentPlayer() == Gameplay::Player_White ?  "White" : "Black") << endl;
+    os << "White(○): " << g.currentDiscCount(Gameplay::Player_White) << " Black(●): " << g.currentDiscCount(Gameplay::Player_Black);
+    os << ", Current player: " << (g.currentPlayer() == Gameplay::Player_White ?  "White(○)" : "Black(●)") << endl;
 
     return os;
 }
