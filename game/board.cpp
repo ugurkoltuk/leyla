@@ -9,16 +9,11 @@ Board::Disc m_invalid;
 
 void Board::allocateBoardVector(size_t dimension)
 {
-    for (int i = 0; i < dimension; ++i)
-    {
-        m_board.push_back(vector<Board::Disc>(dimension, Board::Disc::Disc_None));
-    }
+
 }
 
 Board::Board(size_t dimension)
 {
-    allocateBoardVector(dimension);
-
     at(Coordinates(3, 3)) = Disc_White;
     at(Coordinates(4, 4)) = Disc_White;
 
@@ -28,15 +23,8 @@ Board::Board(size_t dimension)
 
 Board::Board(const Board &rhs)
 {
-    allocateBoardVector(rhs.size());
-
-    for (int row = 0; row < rhs.size(); ++row)
-    {
-        for (int col = 0; col < rhs.size(); ++ col)
-        {
-            at(Coordinates(row, col)) = rhs.at(Board::Coordinates(row, col));
-        }
-    }
+    m_board_white_discs = rhs.m_board_white_discs;
+    m_board_black_discs = rhs.m_board_black_discs;
 
 }
 
@@ -54,49 +42,65 @@ bool Board::isInBoard(const Coordinates &coordinates)const
     return true;
 }
 
-
-Board::Disc &Board::at(const Coordinates &coordinates)
+const Board::Disc &Board::setter_proxy::operator=(const Board::Disc &rval)
 {
-    if (isInBoard(coordinates))
+    if (rval == Disc_White)
     {
-        return m_board[coordinates.first][coordinates.second];
+        m_board.m_board_white_discs[m_row * 8 + m_col] = 1;
+        m_board.m_board_black_discs[m_row * 8 + m_col] = 0;
+    }
+    else if (rval == Disc_Black)
+    {
+        m_board.m_board_white_discs[m_row * 8 + m_col] = 0;
+        m_board.m_board_black_discs[m_row * 8 + m_col] = 1;
+    }
+    else
+    {
+        m_board.m_board_white_discs[m_row * 8 + m_col] = 0;
+        m_board.m_board_black_discs[m_row * 8 + m_col] = 0;
     }
 
-    throw out_of_range("Cannot access element.");
+    return rval;
 }
 
-const Board::Disc &Board::at(const Coordinates &cooridnates) const
+Board::setter_proxy::operator Disc()const
 {
-    if (isInBoard(cooridnates))
+    return Board::Disc(Disc_None + (m_board.m_board_white_discs[m_row * 8 + m_col] + 2 * m_board.m_board_black_discs[m_row * 8 + m_col]));
+}
+
+
+Board::setter_proxy Board::at(const Coordinates &coordinates)
+{
+    if (!isInBoard(coordinates))
     {
-        return m_board[cooridnates.first][cooridnates.second];
+        throw out_of_range("Element out of board range.");
     }
 
-    throw out_of_range("Cannot access element.");
+    return setter_proxy(*this, coordinates.first, coordinates.second);
+}
+
+Board::Disc Board::at(const Coordinates &cooridnates) const
+{
+    if (!isInBoard(cooridnates))
+    {
+        throw out_of_range("Element out of board range.");
+    }
+
+    return Board::Disc(Disc_None + (m_board_white_discs[cooridnates.first * 8 + cooridnates.second] + 2 * m_board_black_discs[cooridnates.first * 8 + cooridnates.second]));
 }
 
 void Board::flip(const Coordinates &coordinates)
 {
     if (isInBoard(coordinates))
     {
-        if (at(coordinates) == Disc_White)
-        {
-            at(coordinates) = Disc_Black;
-        }
-        else if (at(coordinates) == Disc_Black)
-        {
-            at(coordinates) = Disc_White;
-        }
-        else
-        {
-            throw logic_error("Trying to flip a disc that doesn't exist...");
-        }
+        m_board_white_discs.flip(coordinates.first * 8 + coordinates.second);
+        m_board_black_discs.flip(coordinates.first * 8 + coordinates.second);
     }
 }
 
 size_t Board::size(void)const
 {
-    return m_board.size();
+    return 8;
 }
 
 ostream& operator<<(ostream& os, const Board &gameBoard)

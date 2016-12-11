@@ -22,18 +22,17 @@ Board::Coordinates Leyla::play(const Gameplay &state) const
     vector<Board::Coordinates> allMoves = state.allValidMoves();
     vector<int> allOutcomes;
 
-    //cout << "There are " << allMoves.size() << "possible moves to choose from. " << endl;
     int i = 0;
-    for (auto move: allMoves)
+
+    for (auto move : allMoves)
     {
-        //cout << "What if Leyla did move #" << i++ << endl;
         Gameplay nextState(state);
         nextState.play(move);
+
         allOutcomes.push_back(evaluate(nextState, m_depth));
     }
 
     auto best_outcome = max_element(allOutcomes.begin(), allOutcomes.end());
-    //cout << "Leyla decided to do move #" << distance(allOutcomes.begin(), best_outcome) << endl;
     return allMoves[distance(allOutcomes.begin(), best_outcome)];
 }
 
@@ -41,11 +40,6 @@ int Leyla::evaluate(const Gameplay &state, size_t depth)const
 {
     if (depth == 0)
     {
-
-        for (int j = 0; j <  m_depth - depth + 1; ++j) {
-            //cout << "\t";
-        }
-        //cout << "A leaf. Last player is " << (state.currentPlayer() == m_aiPlayer ? "LEYLA" : "HUMAN") << " and is Evaluated to " << valueOf(state) << endl;
         return valueOf(state);
     }
     else
@@ -58,10 +52,6 @@ int Leyla::evaluate(const Gameplay &state, size_t depth)const
         vector<Board::Coordinates> allMoves = state.allValidMoves();
         vector<int> allOutcomes;
 
-        for (int j = 0; j <  m_depth - depth + 1; ++j) {
-            //cout << "\t";
-        }
-        //cout << "At the level " << m_depth - depth + 1 << " there are " << allMoves.size() << " valid moves." << endl;
 #pragma omp parallel for
         for (int i = 0; i < allMoves.size(); ++i)
         {

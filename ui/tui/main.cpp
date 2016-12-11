@@ -2,6 +2,7 @@
 #include <cctype>
 #include <termcap.h>
 #include <unistd.h>
+#include <ctime>
 
 #include "game/gameplay.h"
 #include "ai/leyla.h"
@@ -35,8 +36,11 @@ int main(int argc, char **argv)
     Board::Coordinates leylaCoordinates;
     cout << game;
 
+    struct timespec tm, tm2;
+    clock_gettime(CLOCK_MONOTONIC, &tm);
     while (!game.hasEnded())
     {
+#if 0
         size_t row, col;
         char col_char;
 
@@ -66,14 +70,28 @@ int main(int argc, char **argv)
             col = toupper(col_char) - 'A';
         }
         while (!game.play(Board::Coordinates(row, col)));
+#endif
 
+        Leyla leyla2(atoi(argv[1]), Gameplay::Player_Black);
+        clear_screen();
+        cout << game;
+
+        if (!game.hasValidMoves())
+        {
+            cout << "Leyla2 has no valid moves." << endl;
+            //sleep(3);
+            game.skip();
+            continue;
+        }
+        cout << "Leyla2 is thinking ... " << endl;
+        game.play(leylaCoordinates = leyla2.play(game));
         clear_screen();
         cout << game;
 
         if (!game.hasValidMoves())
         {
             cout << "Leyla has no valid moves." << endl;
-            sleep(3);
+            //sleep(3);
             game.skip();
             continue;
         }
@@ -81,9 +99,13 @@ int main(int argc, char **argv)
         game.play(leylaCoordinates = leyla.play(game));
         clear_screen();
         cout << game;
+
+
         leylaPlayed = true;
         humanPlayed = false;
     }
+    clock_gettime(CLOCK_MONOTONIC, &tm2);
+
 
     clear_screen();
     cout << game;
@@ -100,6 +122,7 @@ int main(int argc, char **argv)
     {
         cout << "DRAW!!!" << endl;
     }
+    cout << "elapsed: " << (tm2.tv_nsec - tm.tv_nsec) / 1000000 + ((tm2.tv_sec - tm.tv_sec) * 1000) << " milliseconds." << endl;
 
     return 0;
 }
