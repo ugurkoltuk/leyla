@@ -18,10 +18,16 @@ void clear_screen()
     fputs(str, stdout);
 }
 
-int main()
+int main(int argc, char **argv)
 {
     Gameplay game;
-    Leyla leyla(4, Gameplay::Player_White);
+
+    if (argc < 2) {
+        cerr << "Usage: " << argv[0] << " <search depth>" << endl;
+        exit(EXIT_FAILURE);
+    }
+
+    Leyla leyla(atoi(argv[1]), Gameplay::Player_White);
     bool humanPlayed = false;
     bool leylaPlayed = false;
 
