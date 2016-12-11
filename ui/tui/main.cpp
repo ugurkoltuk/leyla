@@ -44,6 +44,9 @@ int main(int argc, char **argv)
             clear_screen();
             if (!game.hasValidMoves())
             {
+                cout <<"Human has no valid moves!" << endl;
+                sleep(3);
+                game.skip();
                 break;
             }
 
@@ -70,6 +73,8 @@ int main(int argc, char **argv)
         if (!game.hasValidMoves())
         {
             cout << "Leyla has no valid moves." << endl;
+            sleep(3);
+            game.skip();
             continue;
         }
         cout << "Leyla is thinking ... " << endl;
