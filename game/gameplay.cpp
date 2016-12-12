@@ -214,8 +214,8 @@ Gameplay::Player Gameplay::winner(void) const
 std::ostream& operator<<(std::ostream& os, const Gameplay &g)
 {
     os << g.m_board;
-    os << "White(○): " << g.currentDiscCount(Gameplay::Player_White) << " Black(●): " << g.currentDiscCount(Gameplay::Player_Black);
-    os << ", Current player: " << (g.currentPlayer() == Gameplay::Player_White ?  "White(○)" : "Black(●)") << endl;
+    os << "White(●): " << g.currentDiscCount(Gameplay::Player_White) << " Black(○): " << g.currentDiscCount(Gameplay::Player_Black);
+    os << ", Current player: " << (g.currentPlayer() == Gameplay::Player_White ?  "White(●)" : "Black(○)") << endl;
 
     return os;
 }

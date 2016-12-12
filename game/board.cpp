@@ -130,10 +130,10 @@ ostream& operator<<(ostream& os, const Board &gameBoard)
                 os << "   ";
                 break;
             case Board::Disc::Disc_Black:
-                os << " ● ";
+                os << " ○ ";
                 break;
             case Board::Disc::Disc_White:
-                os << " ○ ";
+                os << " ● ";
                 break;
             default:
                 os << "????";
