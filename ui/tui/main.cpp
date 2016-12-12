@@ -57,7 +57,7 @@ int main(int argc, char **argv)
 
     Gameplay game;
     Leyla leyla(atoi(argv[2]), Gameplay::Player_White);
-    bool humanPlayed = false;
+    bool humanPlayed = true;
     bool leylaPlayed = false;
 
     clear_screen();
@@ -82,11 +82,10 @@ int main(int argc, char **argv)
                     break;
                 }
 
-                if (humanPlayed)
+                if (!humanPlayed)
                 {
                     cout << "Invalid move (" << row << ", " << col_char << ")! Try again." << endl;
                 }
-                humanPlayed = true;
 
                 if (leylaPlayed)
                 {
@@ -96,8 +95,10 @@ int main(int argc, char **argv)
                 cout << "Enter your move:" << endl;
                 cin >> row >> col_char;
                 col = toupper(col_char) - 'A';
+
+                humanPlayed = game.play(Board::Coordinates(row, col));
             }
-            while (!game.play(Board::Coordinates(row, col)));
+            while (!humanPlayed);
             clear_screen();
             cout << game;
         }
@@ -128,9 +129,8 @@ int main(int argc, char **argv)
         clear_screen();
         cout << game;
 
-
         leylaPlayed = true;
-        humanPlayed = false;
+
     }
     clock_gettime(CLOCK_MONOTONIC, &tm2);
 
