@@ -17,7 +17,7 @@ void clear_screen()
 
     tgetent(buf, getenv("TERM"));
     str = tgetstr("cl", NULL);
-    fputs(str, stdout);
+   // fputs(str, stdout);
 }
 
 enum Mode
@@ -77,7 +77,8 @@ int main(int argc, char **argv)
                 if (!game.hasValidMoves())
                 {
                     cout <<"Human has no valid moves!" << endl;
-                    sleep(3);
+                    cout << game;
+                    cin.ignore();
                     game.skip();
                     break;
                 }
@@ -121,6 +122,11 @@ int main(int argc, char **argv)
         if (!game.hasValidMoves())
         {
             cout << "Leyla has no valid moves." << endl;
+            cout << game;
+            if (gameMode == Mode_HumanVsComputer)
+            {
+                cin.ignore();
+            }
             game.skip();
             continue;
         }

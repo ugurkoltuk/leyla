@@ -10,9 +10,9 @@ class Gameplay
 public:
     enum Player
     {
-        Player_White,
-        Player_Black,
         Player_None,
+        Player_White,
+        Player_Black,        
     };
 
     /**
@@ -96,8 +96,19 @@ public:
      *          Function to check if a given player has
      *          any valid moves.
      * @return
+     *          True if has valid moves, false otherwise.
      */
     bool hasValidMoves() const;
+
+    /**
+     * @brief validMovesCount
+     *          Returns number of valid moves of a given player, without the actual move vector.
+     * @param player
+     *          The player whose valid moves shall be counted.
+     * @return
+     *          Number of valid moves of "player".
+     */
+    size_t validMovesCount(Player player)const;
 
     /**
      * @brief hasEnded
@@ -128,6 +139,15 @@ public:
      *          os
      */
     friend std::ostream& operator<<(std::ostream& os, const Gameplay &g);
+
+    /**
+     * @brief board
+     *          Gets a const reference to the underlying board.
+     * @return
+     *          The game board.
+     */
+    const Board &board(void)const;
+
 private:
     Board m_board;
     Player m_currentPlayer;

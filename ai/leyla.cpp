@@ -33,6 +33,19 @@ Board::Coordinates Leyla::play(const Gameplay &state) const
     }
 
     auto best_outcome = max_element(allOutcomes.begin(), allOutcomes.end());
+    if (*best_outcome == numeric_limits<int>::max())
+    {
+        cout <<"You are defeated in a few moves. " <<endl;
+    }
+    else if (*best_outcome == numeric_limits<int>::min())
+    {
+        cout << "I am defeated in a few moves. " << endl;
+    }
+    else
+    {
+        cout << "Evaluation of this move is: " << *best_outcome << endl;
+    }
+
     return allMoves[distance(allOutcomes.begin(), best_outcome)];
 }
 
@@ -62,13 +75,18 @@ int Leyla::evaluate(const Gameplay &state, size_t depth)const
 #pragma omp critical
             allOutcomes.push_back(evaluation);
         }
+
+        //if it is currently AI turn, pick the next move with largest outcome.
         if (state.currentPlayer() == m_aiPlayer)
         {
             return *max_element(allOutcomes.begin(), allOutcomes.end());
         }
+
+        //if it is currently opponents turn, pick the next move with smallest outcome.
         return *min_element(allOutcomes.begin(), allOutcomes.end());
     }
 }
+
 int Leyla::valueOf(const Gameplay &state) const
 {
     if (state.winner() == m_aiPlayer)
@@ -81,5 +99,61 @@ int Leyla::valueOf(const Gameplay &state) const
         return numeric_limits<int>::min();
     }
 
-    return state.currentDiscCount(m_aiPlayer) - state.currentDiscCount(OPPONENT_OF(m_aiPlayer));
+    int p = parity(state);
+    int m = mobility(state);
+    int c = cornersCaptured(state);
+
+    return  (10 * p) + (801.724 * c) + (78.922 * m);
 }
+
+
+//HEURISTICS partially inspired by https://kartikkukreja.wordpress.com/2013/03/30/heuristic-function-for-reversiothello/
+
+int Leyla::parity(const Gameplay &state)const
+{
+    int aiDiscCount = state.currentDiscCount(m_aiPlayer);
+    int humanDiscCount = state.currentDiscCount(OPPONENT_OF(m_aiPlayer));
+    return 100 * (aiDiscCount - humanDiscCount) / (aiDiscCount + humanDiscCount);
+}
+
+int Leyla::mobility(const Gameplay &state)const
+{
+    int aiMoves = state.validMovesCount(m_aiPlayer);
+    int humanMoves = state.validMovesCount(OPPONENT_OF(m_aiPlayer));
+
+    if (aiMoves + humanMoves == 0)
+    {
+        return 0;
+    }
+
+    return 100 * (aiMoves - humanMoves) / (aiMoves + humanMoves);
+}
+
+#define         DISC_OF(player)     ((player) == Gameplay::Player_White ? Board::Disc_White : Board::Disc_Black)
+int Leyla::cornersCaptured(const Gameplay &state)const
+{
+    const Board &gameBoard = state.board();
+
+    int aiCorners = 0;
+    int humanCorners = 0;
+
+    aiCorners += gameBoard.at(Board::Coordinates(0,0)) == DISC_OF(m_aiPlayer);
+    aiCorners += gameBoard.at(Board::Coordinates(0,7)) == DISC_OF(m_aiPlayer);
+    aiCorners += gameBoard.at(Board::Coordinates(7,0)) == DISC_OF(m_aiPlayer);
+    aiCorners += gameBoard.at(Board::Coordinates(7,7)) == DISC_OF(m_aiPlayer);
+
+    humanCorners += gameBoard.at(Board::Coordinates(0,0)) == DISC_OF(OPPONENT_OF(m_aiPlayer));
+    humanCorners += gameBoard.at(Board::Coordinates(0,7)) == DISC_OF(OPPONENT_OF(m_aiPlayer));
+    humanCorners += gameBoard.at(Board::Coordinates(7,0)) == DISC_OF(OPPONENT_OF(m_aiPlayer));
+    humanCorners += gameBoard.at(Board::Coordinates(7,7)) == DISC_OF(OPPONENT_OF(m_aiPlayer));
+
+
+    if (aiCorners + humanCorners == 0)
+    {
+        return 0;
+    }
+
+    return 100 * (aiCorners - humanCorners) / (aiCorners + humanCorners);
+}
+
+

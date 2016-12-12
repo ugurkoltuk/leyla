@@ -185,6 +185,28 @@ vector<Board::Coordinates> Gameplay::allValidMoves() const
 
 }
 
+size_t Gameplay::validMovesCount(Player player)const
+{
+    Gameplay localCopy(*this);
+    if (player != localCopy.currentPlayer())
+    {
+        localCopy.advance();
+    }
+
+    size_t count = 0;
+    for (size_t row = 0; row < size(); ++row)
+    {
+        for (size_t col = 0; col < size(); ++col)
+        {
+            if (isValidMove(Board::Coordinates(row, col)))
+            {
+                count++;
+            }
+        }
+    }
+    return count;
+}
+
 bool Gameplay::hasValidMoves() const
 {
     return !allValidMoves().empty();
@@ -220,3 +242,7 @@ std::ostream& operator<<(std::ostream& os, const Gameplay &g)
     return os;
 }
 
+const Board &Gameplay::board(void)const
+{
+    return m_board;
+}
