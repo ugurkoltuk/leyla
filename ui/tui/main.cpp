@@ -17,7 +17,7 @@ void clear_screen()
 
     tgetent(buf, getenv("TERM"));
     str = tgetstr("cl", NULL);
-   // fputs(str, stdout);
+    fputs(str, stdout);
 }
 
 enum Mode
