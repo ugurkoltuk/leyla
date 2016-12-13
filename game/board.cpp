@@ -5,13 +5,6 @@
 
 using namespace std;
 
-Board::Disc m_invalid;
-
-void Board::allocateBoardVector(size_t dimension)
-{
-
-}
-
 Board::Board(size_t dimension)
 {
     at(Coordinates(3, 3)) = Disc_White;
@@ -25,7 +18,6 @@ Board::Board(const Board &rhs)
 {
     m_board_white_discs = rhs.m_board_white_discs;
     m_board_black_discs = rhs.m_board_black_discs;
-
 }
 
 bool Board::isInBoard(const Coordinates &coordinates)const
@@ -96,26 +88,6 @@ void Board::flip(const Coordinates &coordinates)
         m_board_white_discs.flip(coordinates.first * 8 + coordinates.second);
         m_board_black_discs.flip(coordinates.first * 8 + coordinates.second);
     }
-}
-
-size_t Board::discCount(void)const
-{
-    size_t count = 0;
-    for (size_t row = 0; row < size(); ++row)
-    {
-        for (size_t col = 0; col < size(); ++col)
-        {
-            if (m_board_black_discs[row * size() + col])
-            {
-                count++;
-            }
-            else if (m_board_white_discs[row * size() + col])
-            {
-                count++;
-            }
-        }
-    }
-    return count;
 }
 
 size_t Board::size(void)const

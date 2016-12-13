@@ -110,10 +110,10 @@ int Leyla::valueOf(const Gameplay &state) const
     int cornersWeight = 120;
     int stabilityWeight = 60;
 
-    if ((state.board().size() * state.board().size()) - state.board().discCount() < 10)
+    if ((state.board().size() * state.board().size()) - (state.currentDiscCount(Gameplay::Player_White) + state.currentDiscCount(Gameplay::Player_Black)) < 10)
     {
         //override these at the end of the game:
-        parityWeight = 80;
+        parityWeight = 120;
         cornersWeight = 10;
     }
 

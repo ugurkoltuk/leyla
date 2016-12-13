@@ -10,7 +10,6 @@ class Board
 private:
     std::bitset<64> m_board_white_discs;
     std::bitset<64> m_board_black_discs;
-    void allocateBoardVector(size_t dimension);
 public:
     typedef std::pair<size_t, size_t> Coordinates;
 
@@ -40,9 +39,6 @@ public:
     Disc at(const Coordinates &cooridnates)const;
 
     void flip(const Coordinates &coordinates);
-
-    size_t discCount(void)const;
-
 };
 
 std::ostream& operator<<(std::ostream& os, const Board &b);
