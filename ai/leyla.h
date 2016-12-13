@@ -15,6 +15,7 @@ private:
     int parity(const Gameplay &state)const;
     int mobility(const Gameplay &state)const;
     int cornersCaptured(const Gameplay &state)const;
+    int stability(const Gameplay &state)const;
 public:
     Leyla(size_t depth, Gameplay::Player aiPlayer);
     Board::Coordinates play(const Gameplay &state)const;

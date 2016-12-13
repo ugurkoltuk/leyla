@@ -98,6 +98,26 @@ void Board::flip(const Coordinates &coordinates)
     }
 }
 
+size_t Board::discCount(void)const
+{
+    size_t count = 0;
+    for (size_t row = 0; row < size(); ++row)
+    {
+        for (size_t col = 0; col < size(); ++col)
+        {
+            if (m_board_black_discs[row * size() + col])
+            {
+                count++;
+            }
+            else if (m_board_white_discs[row * size() + col])
+            {
+                count++;
+            }
+        }
+    }
+    return count;
+}
+
 size_t Board::size(void)const
 {
     return 8;
@@ -115,7 +135,7 @@ ostream& operator<<(ostream& os, const Board &gameBoard)
             os << "   ";
             for (col = 0; col < gameBoard.size(); ++col)
             {
-                os << char('A' + col) << "  ";
+                os << char('A' + col) << " ";
             }
             os << endl;
         }
@@ -127,13 +147,13 @@ ostream& operator<<(ostream& os, const Board &gameBoard)
             switch (gameBoard.at(Board::Coordinates(row,col)))
             {
             case Board::Disc::Disc_None:
-                os << ".  ";
+                os << ". ";
                 break;
             case Board::Disc::Disc_Black:
-                os << "○  ";
+                os << "○ ";
                 break;
             case Board::Disc::Disc_White:
-                os << "●  ";
+                os << "● ";
                 break;
             default:
                 os << "??";
@@ -141,7 +161,7 @@ ostream& operator<<(ostream& os, const Board &gameBoard)
             }
         }
 
-        os << endl << endl;
+        os << endl;
     }
     return os;
 }

@@ -8,7 +8,8 @@
 
 using namespace std;
 
-#define OPPONENT_OF(aPlayer) ((aPlayer) == Gameplay::Player_White ? Gameplay::Player_Black : Gameplay::Player_White)
+#define         OPPONENT_OF(aPlayer) ((aPlayer) == Gameplay::Player_White ? Gameplay::Player_Black : Gameplay::Player_White)
+#define         DISC_OF(aPlayer)     ((aPlayer) == Gameplay::Player_White ? Board::Disc_White : Board::Disc_Black)
 
 Leyla::Leyla(size_t depth, Gameplay::Player aiPlayer)
     :m_depth(depth),
@@ -35,15 +36,15 @@ Board::Coordinates Leyla::play(const Gameplay &state) const
     auto best_outcome = max_element(allOutcomes.begin(), allOutcomes.end());
     if (*best_outcome == numeric_limits<int>::max())
     {
-        cout <<"You are defeated in a few moves. " <<endl;
+        cerr <<"You are defeated in a few moves. " <<endl;
     }
     else if (*best_outcome == numeric_limits<int>::min())
     {
-        cout << "I am defeated in a few moves. " << endl;
+        cerr << "I am defeated in a few moves. " << endl;
     }
     else
     {
-        cout << "Evaluation of this move is: " << *best_outcome << endl;
+        cerr << "Evaluation of this move is: " << *best_outcome << endl;
     }
 
     return allMoves[distance(allOutcomes.begin(), best_outcome)];
@@ -102,12 +103,25 @@ int Leyla::valueOf(const Gameplay &state) const
     int p = parity(state);
     int m = mobility(state);
     int c = cornersCaptured(state);
+    int s = stability(state);
 
-    return  (10 * p) + (801.724 * c) + (78.922 * m);
+    int parityWeight = 10;
+    int mobilityWeight = 78;
+    int cornersWeight = 120;
+    int stabilityWeight = 60;
+
+    if ((state.board().size() * state.board().size()) - state.board().discCount() < 10)
+    {
+        //override these at the end of the game:
+        parityWeight = 80;
+        cornersWeight = 10;
+    }
+
+    return (parityWeight * p) + (cornersWeight * c) + (mobilityWeight* m) + (stabilityWeight * s);
 }
 
 
-//HEURISTICS partially inspired by https://kartikkukreja.wordpress.com/2013/03/30/heuristic-function-for-reversiothello/
+//Heuristics inspired by https://courses.cs.washington.edu/courses/cse573/04au/Project/mini1/RUSSIA/Final_Paper.pdf
 
 int Leyla::parity(const Gameplay &state)const
 {
@@ -129,7 +143,6 @@ int Leyla::mobility(const Gameplay &state)const
     return 100 * (aiMoves - humanMoves) / (aiMoves + humanMoves);
 }
 
-#define         DISC_OF(player)     ((player) == Gameplay::Player_White ? Board::Disc_White : Board::Disc_Black)
 int Leyla::cornersCaptured(const Gameplay &state)const
 {
     const Board &gameBoard = state.board();
@@ -156,4 +169,42 @@ int Leyla::cornersCaptured(const Gameplay &state)const
     return 100 * (aiCorners - humanCorners) / (aiCorners + humanCorners);
 }
 
+int Leyla::stability(const Gameplay &state)const
+{
+    int aiStability = 0;
+    int humanStability = 0;
+
+    int stabilityValues[8][8] = {
+        {4,  -3,  2,  2,  2,  2, -3,  4, },
+        {-3, -4, -1, -1, -1, -1, -4, -3, },
+        { 2, -1,  1,  0,  0,  0,  1,  2, },
+        { 2, -1,  0,  1,  1,  0, -1,  2, },
+        { 2, -1,  0,  1,  1,  0, -1,  2, },
+        { 2, -1,  1,  0,  0,  0,  1,  2, },
+        {-3, -4, -1, -1, -1, -1, -4, -3, },
+        { 4, -3,  2,  2,  2,  2, -3,  4, },
+    };
+
+    for (int row = 0; row < state.size(); ++row)
+    {
+        for (int col = 0; col < state.size(); ++col)
+        {
+            if (state.board().at(Board::Coordinates(row, col)) == DISC_OF(m_aiPlayer))
+            {
+                aiStability += stabilityValues[row][col];
+            }
+            else if (state.board().at(Board::Coordinates(row, col)) == DISC_OF(OPPONENT_OF(m_aiPlayer)))
+            {
+                humanStability += stabilityValues[row][col];
+            }
+        }
+    }
+
+    if (aiStability + humanStability == 0)
+    {
+        return 0;
+    }
+
+    return 100 * (aiStability - humanStability) / (aiStability + humanStability);
+}
 

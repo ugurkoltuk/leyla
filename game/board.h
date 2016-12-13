@@ -41,6 +41,8 @@ public:
 
     void flip(const Coordinates &coordinates);
 
+    size_t discCount(void)const;
+
 };
 
 std::ostream& operator<<(std::ostream& os, const Board &b);

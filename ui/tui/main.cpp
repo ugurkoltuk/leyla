@@ -74,6 +74,8 @@ int main(int argc, char **argv)
 
             do {
                 clear_screen();
+                cout << game;
+
                 if (!game.hasValidMoves())
                 {
                     cout <<"Human has no valid moves!" << endl;
@@ -90,9 +92,8 @@ int main(int argc, char **argv)
 
                 if (leylaPlayed)
                 {
-                    cout << "Leyla played: (" << leylaCoordinates.first << ", " << char(leylaCoordinates.second + 'A') << ")." << endl;
+                    cout << "Leyla played: (" << leylaCoordinates.first + 1 << ", " << char(leylaCoordinates.second + 'A') << ")." << endl;
                 }
-                cout << game;
                 cout << "Enter your move:" << endl;
                 cin >> row >> col_char;
                 col = toupper(col_char) - 'A';
