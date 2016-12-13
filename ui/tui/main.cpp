@@ -97,7 +97,7 @@ int main(int argc, char **argv)
                 cin >> row >> col_char;
                 col = toupper(col_char) - 'A';
 
-                humanPlayed = game.play(Board::Coordinates(row, col));
+                humanPlayed = game.play(Board::Coordinates(row-1, col));
             }
             while (!humanPlayed);
             clear_screen();

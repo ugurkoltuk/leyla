@@ -112,14 +112,14 @@ ostream& operator<<(ostream& os, const Board &gameBoard)
     {
         if (row == 0)
         {
-            os << "     ";
+            os << "   ";
             for (col = 0; col < gameBoard.size(); ++col)
             {
-                os << char('A' + col) << "   ";
+                os << char('A' + col) << "  ";
             }
             os << endl;
         }
-        os << row << "  |";
+        os << row + 1 << "  ";
 
 
         for (col = 0; col < gameBoard.size(); ++col)
@@ -127,19 +127,18 @@ ostream& operator<<(ostream& os, const Board &gameBoard)
             switch (gameBoard.at(Board::Coordinates(row,col)))
             {
             case Board::Disc::Disc_None:
-                os << "   ";
+                os << ".  ";
                 break;
             case Board::Disc::Disc_Black:
-                os << " ○ ";
+                os << "○  ";
                 break;
             case Board::Disc::Disc_White:
-                os << " ● ";
+                os << "●  ";
                 break;
             default:
-                os << "????";
+                os << "??";
                 break;
             }
-            os << "|";
         }
 
         os << endl << endl;
