@@ -198,7 +198,7 @@ size_t Gameplay::validMovesCount(Player player)const
     {
         for (size_t col = 0; col < size(); ++col)
         {
-            if (isValidMove(Board::Coordinates(row, col)))
+            if (localCopy.isValidMove(Board::Coordinates(row, col)))
             {
                 count++;
             }

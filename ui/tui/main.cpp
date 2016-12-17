@@ -55,8 +55,23 @@ int main(int argc, char **argv)
         exit(EXIT_FAILURE);
     }
 
+    int p, m, c, s;
+    int p2, m2, c2, s2;
+    p = atoi(argv[3]);
+    m = atoi(argv[4]);
+    c = atoi(argv[5]);
+    s = atoi(argv[6]);
+
+    p2 = atoi(argv[7]);
+    m2 = atoi(argv[8]);
+    c2 = atoi(argv[9]);
+    s2 = atoi(argv[10]);
+
     Gameplay game;
-    Leyla leyla(atoi(argv[2]), Gameplay::Player_White);
+
+    Leyla leyla (atoi(argv[2]), Gameplay::Player_White, p, m, c, s);
+    Leyla leyla2(atoi(argv[2]), Gameplay::Player_Black, p2, m2, c2, s2);
+
     bool humanPlayed = true;
     bool leylaPlayed = false;
 
@@ -98,7 +113,7 @@ int main(int argc, char **argv)
                 cin >> row >> col_char;
                 col = toupper(col_char) - 'A';
 
-                humanPlayed = game.play(Board::Coordinates(row-1, col));
+                humanPlayed = game.play(Board::Coordinates(row - 1, col));
             }
             while (!humanPlayed);
             clear_screen();
@@ -106,8 +121,6 @@ int main(int argc, char **argv)
         }
         else if (gameMode == Mode_ComputerVsComputer)
         {
-            Leyla leyla2(atoi(argv[2]), Gameplay::Player_Black);
-
             if (!game.hasValidMoves())
             {
                 cout << "Leyla2 has no valid moves." << endl;
@@ -143,21 +156,24 @@ int main(int argc, char **argv)
 
 
     clear_screen();
-    cout << game;
+    cerr << game;
 
-    if (game.winner() == Gameplay::Player_Black)
+    if (game.winner() == Gameplay::Player_White)
     {
-        cout << "Black player wins!" << endl;
+        cerr << "White player wins!" << endl;
+        return 1;
     }
-    else if (game.winner() == Gameplay::Player_White)
+    else if (game.winner() == Gameplay::Player_Black)
     {
-        cout << "White wins!" << endl;
+        cerr << "Black wins!" << endl;
+        return 2;
     }
     else
     {
-        cout << "DRAW!!!" << endl;
+        cerr << "DRAW!!!" << endl;
+        return 0;
     }
-    cout << "elapsed: " << (tm2.tv_nsec - tm.tv_nsec) / 1000000 + ((tm2.tv_sec - tm.tv_sec) * 1000) << " milliseconds." << endl;
+    cerr << "elapsed: " << (tm2.tv_nsec - tm.tv_nsec) / 1000000 + ((tm2.tv_sec - tm.tv_sec) * 1000) << " milliseconds." << endl;
 
     return 0;
 }

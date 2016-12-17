@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include <stdexcept>
+#include "../ai/leyla.h"
 
 using namespace std;
 
@@ -57,7 +58,21 @@ const Board::Disc &Board::setter_proxy::operator=(const Board::Disc &rval)
 
 Board::setter_proxy::operator Disc()const
 {
-    return Board::Disc(Disc_None + (m_board.m_board_white_discs[m_row * 8 + m_col] + 2 * m_board.m_board_black_discs[m_row * 8 + m_col]));
+    if (m_board.m_board_black_discs[m_row * 8 + m_col] && !m_board.m_board_white_discs[m_row * 8 + m_col])
+    {
+        return Disc::Disc_Black;
+    }
+
+    if (!m_board.m_board_black_discs[m_row * 8 + m_col] && m_board.m_board_white_discs[m_row * 8 + m_col])
+    {
+        return Disc::Disc_White;
+    }
+
+    if (!m_board.m_board_black_discs[m_row * 8 + m_col] && !m_board.m_board_white_discs[m_row * 8 + m_col])
+    {
+        return Disc::Disc_None;
+    }
+
 }
 
 
@@ -122,9 +137,15 @@ ostream& operator<<(ostream& os, const Board &gameBoard)
                 os << ". ";
                 break;
             case Board::Disc::Disc_Black:
+                if (Leyla::coinStability(gameBoard, row, col) == 1)
+                os << "○'";
+                else
                 os << "○ ";
                 break;
             case Board::Disc::Disc_White:
+                if (Leyla::coinStability(gameBoard, row, col) == 1)
+                os << "●'";
+                else
                 os << "● ";
                 break;
             default:
