@@ -20,7 +20,6 @@ Leyla::Leyla(size_t depth, Gameplay::Player aiPlayer, int pw, int mw, int cw, in
      m_cornersWeight(cw),
      m_stabilityWeight(sw)
 {
-    srand((unsigned)time(NULL));
 }
 
 Board::Coordinates Leyla::play(const Gameplay &state) const
@@ -244,10 +243,6 @@ int Leyla::coinStability(const Board &board, size_t row, size_t col)
     {
         int r, c;
 
-        // for a coin to be stable, it should be "unflippable".
-        // that is, it should not be possible to place an opponent
-        // coin in both sides of it in any direction.
-
         bool firstSideOpen = false;
         bool firstSideOpponent = false;
         bool secondSideOpen = false;
@@ -258,7 +253,7 @@ int Leyla::coinStability(const Board &board, size_t row, size_t col)
 
         r = row;
         c = col;
-        //scan in current direction
+        //scan in positive direction of current axis
         while (board.isInBoard(Board::Coordinates(r, c)))
         {
             if (board.at(Board::Coordinates(r, c)) == Board::Disc_None) {
@@ -275,7 +270,7 @@ int Leyla::coinStability(const Board &board, size_t row, size_t col)
 
         r = row;
         c = col;
-        //scan in current direction
+        //scan in negative direction of current axis
         while (board.isInBoard(Board::Coordinates(r, c)))
         {
             if (board.at(Board::Coordinates(r, c)) == Board::Disc_None) {
@@ -297,12 +292,12 @@ int Leyla::coinStability(const Board &board, size_t row, size_t col)
         }
 
         //if one side's open and other belongs to opponent, it can be flipped now.
-        if (firstSideOpen && secondSideOpponent || firstSideOpponent && secondSideOpen)
+        if ((firstSideOpen && secondSideOpponent) || (firstSideOpponent && secondSideOpen))
         {
             return -1; //can be flipped now.
         }
 
-        if (!firstSideOpen && !firstSideOpponent && !secondSideOpen && !secondSideOpponent)
+        if ((!firstSideOpen && !firstSideOpponent) || (!secondSideOpen && !secondSideOpponent))
         {
             //if neither sides are open
             totallyStableAxisCount++;

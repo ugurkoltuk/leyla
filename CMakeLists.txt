@@ -12,6 +12,8 @@ endif()
 
 if (CMAKE_BUILD_TYPE STREQUAL "Release")
     add_definitions(-O3)
+else()
+    add_definitions(-g)
 endif()
 
 aux_source_directory(ai SRC_LIST)
