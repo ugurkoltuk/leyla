@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 
 from subprocess import call
 import random
@@ -11,9 +11,10 @@ def string_from_settings(settings_list):
 #settings: p, m, c, s
 FNULL = open(os.devnull, 'w')
 
-white_settings = [3, 7, 77, 100]
-black_settings = [2, 4, 90, 46]
-winner=1
+white_settings = [48, 0, 86, 92]
+black_settings = [59, 25, 100, 22]
+winner=2
+victim_settings=white_settings
 for _ in range(1, 1000):
     print("=== Round " + str(_) + " / 1000 ===", file=sys.stderr)
     winner = call(["./reversi-cpp", "cc", "4", 
@@ -27,9 +28,11 @@ for _ in range(1, 1000):
     if winner == 1:
         print("    White wins!", file=sys.stderr)
         victim_settings=black_settings    
-    if winner == 2:
+    elif winner == 2:
         print("    Black wins!", file=sys.stderr)
         victim_settings=white_settings
+    else:
+        print("    Draw!", file=sys.stderr)
 
     for weight_index_to_change in weight_indices_to_change:
         victim_settings[weight_index_to_change] = victim_settings[weight_index_to_change] + random.randint(-10,10)
