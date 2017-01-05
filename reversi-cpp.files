@@ -8,3 +8,6 @@ ui/tui/main.cpp
 CMakeLists.txt
 LICENSE
 README.md
+ui/network/main.cpp
+ui/network/reversiopponent.h
+ui/network/reversiopponent.cpp
