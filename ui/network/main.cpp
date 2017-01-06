@@ -35,7 +35,7 @@ int main(int argc, char **argv)
     ReversiOpponent desdemona(adversaryIp, adversaryPort, myPort);
     Gameplay::Player colorOfLeyla = Gameplay::Player(desdemona.decideColor());
     cout << ((colorOfLeyla == 1) ? "LOST THE RPS GAME! :(" : "WON THE GAME!!! I start!") << endl;
-    Leyla leyla(searchDepth, colorOfLeyla, 76, 40, 87, 20);
+    Leyla leyla(searchDepth, colorOfLeyla, 10, 19, 79, 30);
 
     Board::Coordinates leylaCoordinates;
 
@@ -52,6 +52,7 @@ int main(int argc, char **argv)
 
     while (!game.hasEnded())
     {
+        std::this_thread::sleep_for(chrono::seconds(2));
         int desdemonaRow, desdemonaCol;
         bool desdemonaMoved;
 

@@ -64,8 +64,9 @@ ReversiOpponent::~ReversiOpponent()
     }
     catch (boost::system::system_error &e)
     {
-        cerr << "Cannot connect to myself to stimulate my acceptor thread." << endl;
+        cerr << "Fail while self-connecting to stop accept loop" << endl;
     }
+
 
     m_acceptorThread.join();
 }
@@ -110,23 +111,14 @@ size_t ReversiOpponent::receive_msg(void *msg, size_t size)
 
 bool ReversiOpponent::pass()
 {
-    transmit_msg("PASS", strlen("PASS"));
-    char answer[5] = {0,};
-    receive_msg(answer, sizeof(answer));
-
-    return string(answer) == "ACK";
+    return transmit_msg("PASS", strlen("PASS")) == strlen("PASS");
 }
 
 bool ReversiOpponent::sendMove(int row, int col)
 {
     char moveBuffer[2] = {static_cast<char>(row + '0'), static_cast<char>(col + '0')};
 
-    transmit_msg(moveBuffer, 2);
-
-    char answer[5] = {0,};
-    receive_msg(answer, sizeof(answer));
-
-    return string(answer) == "ACK";
+    return transmit_msg(moveBuffer, sizeof(moveBuffer)) == sizeof(moveBuffer);
 }
 
 bool ReversiOpponent::receiveMove(int &row, int &col)
@@ -149,8 +141,6 @@ bool ReversiOpponent::receiveMove(int &row, int &col)
     {
         cout << "An error in transmission. Received: " << opponentMoveBuffer << endl;
     }
-
-    transmit_msg("ACK", strlen("ACK"));
 
     return readBytes == 2;
 }
@@ -179,7 +169,7 @@ int ReversiOpponent::decideColor(void)
         decided = mySelection != opponentSelection;
         if (!decided)
         {
-            cout << "Holy shit. we chose the same thing!" << endl;
+            cout << "Draw in RPS, RETRY!" << endl;
         }
     }
 
